@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>请登录</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--boots、jq文件-->
+    {load href="/static/jquery/jquery-3.3.1.min.js,/static/bootstrap/js/bootstrap.min.js,/static/bootstrap/css/bootstrap.min.css" /}
+    <link rel="stylesheet" href="/static/index/css/index.css">
+</head>
+
+
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <!--<img alt="Brand" src="/static/index/img/logo.jpg">-->
+                中国民航大学网络报修系统
+            </a>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="col-md-4 login">
+        <div class="login_title">
+            <span>请使用上网账号登录</span>
+        </div>
+        <form action="#" onsubmit="return false" method="post">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" class="form-control" name="username" id="username" >
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input autocomplete="off" type="password" class="form-control" name="password" id="password">
+            </div>
+            <div class="login_btn">
+                <button type="submit" class="btn btn-danger">登录</button>
+            </div>
+
+
+        </form>
+    </div>
+    <div class="col-md-6 col-md-offset-1  notice">
+        <div class="header_title">
+            通知公告
+        </div>
+        <div class="notice_body">
+            {:html_entity_decode($notice)}
+        </div>
+
+    </div>
+
+</div>
+<br>
+<br>
+<br>
+<div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Copyright © <span><a href="#">中国民航大学网络信息中心</a></span> | <a href="#">易航工作室</a></span>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script>
+
+    $('form').on('submit',function(){
+        $.post('login',$('form').serializeArray(), function (data) {
+            if(data.code){
+                window.location.href='/repair'
+            }else {
+                alert(data.msg)
+            }
+
+        })
+        return false;
+    })
+</script>

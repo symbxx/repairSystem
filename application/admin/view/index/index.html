@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>cauc网络报修系统后台管理</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/static/admin/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/static/admin/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="/static/admin/css/animate.css" rel="stylesheet">
+    <link href="/static/admin/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="/static/admin/css/daterangepicker.css" rel="stylesheet">
+    <link href="/static/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/static/admin/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="/static/admin/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs" style="font-size:20px;">
+                                        <i class="fa fa-area-chart"></i>
+                                        <strong class="font-bold">后台管理</strong>
+                                    </span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">hAdmin
+                        </div>
+                    </li>
+                    {if $user_type==0}
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span class="ng-scope">主页</span>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/index/dashboard')}">
+                            <i class="fa fa-home"></i>
+                            <span class="nav-label">主页</span>
+                        </a>
+                    </li>
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span class="ng-scope">用户报修</span>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/notice/show')}">
+                            <i class="fa fa-bold"></i>
+                            <span class="nav-label">通知管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/article/show')}">
+                            <i class="fa fa-home"></i>
+                            <span class="nav-label">解决方案</span>
+                        </a>
+                    </li>
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span class="ng-scope">类型</span>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/Type/show')}?type=1">
+                            <i class="fa  fa-tag"></i>
+                            <span class="nav-label">报修类型</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/Type/show')}?type=0">
+                            <i class="fa  fa-tags"></i>
+                            <span class="nav-label">维修类型</span>
+                        </a>
+                    </li>
+                    {/if}
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span class="ng-scope">维修任务</span>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/repair/show')}">
+                            <i class="fa fa-tasks"></i>
+                            <span class="nav-label">维修任务</span>
+                        </a>
+                    </li>
+                    {if condition="$user_type==0"}
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/repair/show_statistics')}">
+                            <i class="fa fa-pie-chart "></i>
+                            <span class="nav-label">数据统计</span>
+                        </a>
+                    </li>
+                    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                        <span class="ng-scope">系统管理</span>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/user/show')}">
+                            <i class="fa fa-user-md"></i>
+                            <span class="nav-label">管理员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="J_menuItem" href="#" data-url="{:url('/admin/option/show')}">
+                            <i class="fa fa-server"></i>
+                            <span class="nav-label">操作日志</span>
+                        </a>
+                    </li>
+                    {/if}
+                    <li class="line dk"></li>
+                    </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-info " href="#"><i class="fa fa-bars"></i> </a>
+                        <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                            <div class="form-group">
+                                <!--<input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search" id="top-search">-->
+                            </div>
+                        </form>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li class="dropdown">
+                            <div class="header_info">欢迎你，<b>{:session('user_nickname')}</b></div>
+                        </li>
+                        <li class="dropdown">
+                            <div class="header_info"><a data-toggle="modal" data-target="#changepsd" class="text-info">修改密码</a></div>
+                        </li>
+                        <li class="dropdown">
+                            <div class="header_info"><a href="/admin/auth/logout" class="text-info">退出</a></div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <div id="J_iframe" width="100%" height="100%" src="/admin/index/dashboard" frameborder="0" data-id="index_v1.html" seamless></div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+    </div>
+    <div class="modal fade" tabindex="-1" id="changepsd" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改密码</h4>
+                </div>
+                <form id="form_psd">
+                <div class="modal-body">
+                        <div class="form-group">
+                            <lable>原密码</lable>
+                            <input class="form-control" name="old_psd" type="password">
+                        </div>
+                        <div class="form-group">
+                            <lable>新密码</lable>
+                            <input class="form-control" name="new_psd" type="password">
+                        </div>
+                        <div class="form-group">
+                            <lable>确认新密码</lable>
+                            <input class="form-control" name="new_psd2" type="password">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">确认修改</button>
+                </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- 全局js -->
+    <script src="/static/admin/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/static/admin/js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="/static/admin/js/moment.js"></script>
+    <script src="/static/admin/js/daterangepicker.js"></script>
+    <script src="/static/admin/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/static/admin/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/static/admin/js/plugins/layer/layer.min.js"></script>
+    <script src="/static/admin/js/admin.js"></script>
+    <!-- 自定义js -->
+    <script src="/static/admin/js/hAdmin.js?v=4.1.0"></script>
+    <script type="text/javascript" src="/static/admin/js/index.js"></script>
+    <!-- 第三方插件 -->
+    <script src="/static/admin/js/plugins/pace/pace.min.js"></script>
+    <script src="/static/admin/js/wangEditor.min.js"></script>
+    <script src="/static/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <!-- Bootstrap table -->
+    <script src="/static/admin/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+
+    <script src="/static/admin/js/plugins/toastr/toastr.min.js"></script>
+    <script src="/static/admin/js/plugins/echarts/echarts-all.js"></script>
+    <script src="/static/admin/js/plugins/echarts/macarons.js"></script>
+    <script type="text/javascript">
+        $.get("/admin/index/dashboard", function(data){
+            $('#J_iframe').html(data.data);
+        });
+        $(function(){
+            $('#form_psd').on('submit',function(){
+                var form_data=$('#form_psd').serializeArray()
+                if(form_data[1].value!=form_data[2].value || form_data[1].value==''){
+                    toastr.error("两次密码不匹配，且不能为空")
+                    return false;
+                }
+                $.post('/admin/user/change_psd',form_data,function(data){
+                    if(data.code){
+                        $('#changepsd').modal('hide')
+                        var types='success'
+                    }else {
+                        var types='error'
+                    }
+                    swal({
+                        title: "提示",
+                        text: data.msg,
+                        type: types
+                    });
+                })
+                return false;
+            })
+        })
+
+    </script>
+</body>
+
+</html>

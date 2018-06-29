@@ -1,0 +1,61 @@
+<div class="form-group">
+    <lable>所属类型</lable>
+    <select class="form-control" name="type" id="type">
+        {volist name="type" id="vo"}
+        <option value="{$vo->id}"
+        {if $vo->id==$art->type}
+            selected="selected"
+        {/if}>{$vo->title}</option>
+        {/volist}
+    </select>
+</div>
+<div class="form-group">
+    <lable>标题</lable>
+    <input type="text" class="form-control" id="title" value="{$art->title}">
+</div>
+<div class="grom-group">
+    <lable>内容</lable>
+    <style type="text/css">
+        .toolbar {
+            border: 1px solid #ccc;
+        }
+        .text {
+            border: 1px solid #ccc;
+            height: 300px;
+        }
+    </style>
+    <div id="div1" class="toolbar">
+    </div>
+    <div style="padding: 5px 0; color: #ccc">请在下面编辑</div>
+    <div id="div2" class="text"> <!--可使用 min-height 实现编辑区域自动增加高度-->
+        <div id="content"></div>
+    </div>
+
+    <input class="input-xlarge focused" style="float:left;" name="content" type="hidden" id="content1" value=" {$art->content|htmlspecialchars_decode}" >
+    <div id="notice_change" class="col-md-12 col-sm-12">
+        <button class="btn btn-primary" id="submit">修改</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var E = window.wangEditor
+    var editor = new E('#div1', '#div2')
+    editor.customConfig.uploadImgServer = '/admin/api/upload' ; // 上传图片到服务器
+    //定义上传的filename，即上传图片的名称
+    editor.customConfig.uploadFileName = 'images';
+    editor.customConfig.showLinkImg = false;
+    editor.create()
+    var data=$('#content1').val()
+    $('#content').html(data)
+    $('#submit').on('click', function () {
+        $.post('/admin/article/update',{'content':editor.txt.html(),'type':$('#type option:selected').val(),'title':$('#title').val()},function(data){
+            $("#edit").modal('hide');
+            swal({
+                title: "提示",
+                text: data.msg,
+                type: 'success'
+            });
+        })
+    })
+</script>

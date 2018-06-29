@@ -1,0 +1,40 @@
+<div style="height: 300px;overflow: auto;">
+    <div class="chat-activity-list">
+        {volist name="reply_list" id="vo"}
+        {switch name="$vo.is_admin" }
+        {case value="1"}
+        <div class="chat-element">
+            <a href="widgets.html#" class="pull-left">
+                <img alt="image" class="img-circle" src="/static/admin/img/a2.jpg">
+            </a>
+            <div class="media-body ">
+                <!--<small class="pull-right text-navy">1分钟前</small>-->
+                <strong>管理员</strong>
+                <p class="m-b-xs">
+                    {$vo.content}
+                </p>
+                <span class="text-navy">{$vo.create_time}</span>
+            </div>
+        </div>
+        {/case}
+        {case value="0"}
+        <div class="chat-element right">
+            <a href="widgets.html#" class="pull-right">
+                <img alt="image" class="img-circle" src="/static/admin/img/a4.jpg">
+            </a>
+            <div class="media-body text-right ">
+                <!--<small class="pull-left">5分钟前</small>-->
+                <strong>{$vo.user} </strong>
+                <p class="m-b-xs">
+                    {$vo.content}
+                </p>
+                <span class="text-navy">{$vo.create_time}</span>
+            </div>
+        </div>
+        {/case}
+        {/switch}
+
+        {/volist}
+    </div>
+</div>
+

@@ -1,0 +1,143 @@
+<head>
+    <meta charset="UTF-8">
+    <title>请登录</title>
+    <!--boots、jq文件-->
+    {load href="/static/jquery/jquery-3.3.1.min.js,/static/bootstrap/js/bootstrap.min.js,/static/bootstrap/css/bootstrap.min.css" /}
+    <link href="/static/admin/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="/static/index/css/style.css" rel="stylesheet">
+    <link href="/static/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script src="/static/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<div class="panel-body" style="padding-bottom:0px;">
+    <div class="panel panel-default">
+        <!--<div class="panel-heading">查询条件</div>-->
+        <div class="panel-body">
+            <table id="tb_departments"></table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="upload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div  name="uploadfile">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabelfile">回复</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+</div>
+<script type="text/javascript">
+    function operateFormatter(value, row, index) {
+        return [
+            '<button class="RoleOfedit detail btn btn-primary btn-sm" data-id=id  data-toggle="modal" style="display:inline">详情</button>',
+        ].join('');
+    }
+    window.operateEvents = {
+        'click .detail': function (e, value, row, index) {
+            $.get('/reply/'+row.id,function(data){
+                $('.modal-body').html(data.data)
+            })
+            $("#upload").modal('show');
+        }
+    };
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_departments').bootstrapTable({
+                url: '/repair_record',         //请求后台的URL（*）
+                method: 'post',                      //请求方式（*）
+                toolbar: '',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: false,                     //是否启用排序
+                sortOrder: "asc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber:1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: true,                //是否启用点击选中行
+                height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                columns: [{
+                    field: 'create_time',
+                    title: '申报时间'
+                }, {
+                    field: 'title',
+                    title: '标题'
+                }, {
+                    field: 'linktel',
+                    title: '联系电话'
+                }, {
+                    field: 'address',
+                    title: '地址'
+                }, {
+                    field: 'status',
+                    title: '状态'
+                },{
+                    field: 'operate',
+                    title: '操作',
+                    width: '150px',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                } ]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit,   //页面大小
+                offset: params.offset,  //页码
+                departmentname: $("#txt_search_departmentname").val(),
+                statu: $("#txt_search_statu").val(),
+                search:params.search
+            };
+            return temp;
+        };
+
+        return oTableInit;
+    };
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //初始化页面上面的按钮事件
+        };
+
+        return oInit;
+    };
+
+    $(function () {
+        //1.初始化Table
+        var oTable = new TableInit();
+        oTable.Init();
+
+        //2.初始化Button的点击事件
+        var oButtonInit = new ButtonInit();
+        oButtonInit.Init();
+
+    });
+
+</script>

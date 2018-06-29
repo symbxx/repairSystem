@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>报修页面</title>
+    {load href="/static/jquery/jquery-3.3.1.min.js,/static/bootstrap/js/bootstrap.min.js,/static/bootstrap/css/bootstrap.min.css" /}
+    <link href="/static/admin/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="/static/index/css/style.css" rel="stylesheet">
+    <link href="/static/index/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <script src="/static/admin/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="/static/admin/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/static/index/js/jquery.raty.min.js" ></script>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <!--<img alt="Brand" src="...">-->
+                中国民航大学网络报修系统
+            </a>
+        </div>
+    </div>
+</nav>
+
+    <div class="container">
+        <div class="col-md-5 col-md-offset-1 choice">
+            <div class="choice_choice">
+                <span>请选择一种<br><b>报修模式</b></span>
+            </div>
+            <div class="choice_tips">
+                <span>自助维修可以解决一些常见问题，我们由衷建议你先尝试自助解决</span>
+            </div>
+            <div>
+                <button  class="zjbx" id="zjbx" ><i class="fa fa-hand-o-right fa-2x"></i>直接报修</button>
+                <button class="zjjj" data-toggle="modal" data-target="#self"><i class="fa fa-male fa-2x"></i>自助解决</button>
+            </div>
+        </div>
+        <div class="col-md-4 col-md-offset-1">
+            <img class="img-responsive" src="/static/index/img/tool.png" alt="">
+        </div>
+
+    </div>
+
+    <div class="panel-body" style="padding-bottom:0px;">
+        <div class="panel panel-default">
+            <!--<div class="panel-heading">查询条件</div>-->
+            <div class="panel-body">
+                <table id="tb_departments"></table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabelfile">回复</h4>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+    <div class="modal fade" id="repair" tabindex="-1" role="dialog" aria-hidden="true">
+        <div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="">报修</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="">
+                            <div class="form-group">
+                                <label for="type">报修类型</label>
+                                <select name="type" id="type" class="form-control">
+                                    {volist name="type" id="vo"}
+                                    <option value="{$vo.id}">{$vo.title}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="linkman">联系人</label>
+                                <input type="text" class="form-control" value="{$user->linkman}" name="linkman" id="linkman" >
+                            </div>
+                            <div class="form-group">
+                                <label for="linktel">联系电话</label>
+                                <input type="text" class="form-control" value="{$user->linktel}" name="linktel" id="linktel" >
+                            </div>
+                            <div class="form-group">
+                                <label for="address">故障地址</label>
+                                <div class="form-inline" id="select">
+                                    校区：
+                                    <select name="campus" class="form-control" id="campus">
+                                        <option value="{$user->campus}">{$user->campus}</option>
+                                    </select>
+                                    楼宇：
+                                    <select name="building" class="form-control" id="building">
+                                        <option value="{$user->building}">{$user->building}</option>
+                                    </select>
+                                </div>
+                                详细地址：<input type="text" class="form-control" value="{$user->address}" name="address" id="address" >
+                            </div>
+                            <div class="form-group">
+                                <label for="content">简单描述</label><br>
+        <textarea class="form-control" name="content" id="content"  rows="5"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">报修</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+    <div class="modal fade" id="self" tabindex="-1" role="dialog" aria-hidden="true">
+        <div >
+            <div class="modal-dialog  modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">自助维修方案</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="type">请选择一种类型</label>
+                            <select onchange="get_method()" id="method_type" name="type"  class="form-control">
+                                <option>请选择</option>
+                                {volist name="type" id="vo"}
+                                <option value="{$vo.id}">{$vo.title}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">您选择的类型有如下解决方案</h3>
+                            </div>
+                            <ul class="list-group">
+
+                        </ul>
+                        </nav>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <span>Copyright © <span><a href="#">中国民航大学网络信息中心</a></span> | <a href="#">易航工作室</a></span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    function get_method(){
+        $.get('/method/'+$("#method_type option:selected").val(),function(data){
+            var str=""
+            for(var i in data.data){
+                str+='<a target="_blank" href="/method_detail/'+data.data[i].id+'" class="list-group-item" style="display: block;">'+data.data[i].title+'</a>'
+            }
+            $('.list-group').html(str)
+        })
+    }
+    function operateFormatter(value, row, index) {
+        return [
+            '<button class="RoleOfedit detail btn btn-primary btn-sm" data-id=id  data-toggle="modal" style="display:inline">详情</button>',
+        ].join('');
+    }
+    window.operateEvents = {
+        'click .detail': function (e, value, row, index) {
+            $.get('/reply/'+row.id,function(data){
+                $('#detail .modal-body').html(data.data)
+            })
+            $("#detail").modal('show');
+        }
+    };
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_departments').bootstrapTable({
+                url: '/repair_record',         //请求后台的URL（*）
+                method: 'post',                      //请求方式（*）
+                toolbar: '',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: false,                     //是否启用排序
+                sortOrder: "asc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber:1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: true,                //是否启用点击选中行
+                height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                columns: [{
+                    field: 'create_time',
+                    title: '申报时间'
+                }, {
+                    field: '#',
+                    title: '评分',
+                    formatter:function(e,value,row,index){
+                        if(value.statu==3 || value.statu==4){
+                            return  "<div class='star' data-id='"+value.id+"' data-statu='"+value.statu+"' data-score='"+value.grade+"'></div>"
+                        }else {
+                            return "暂无需评价";
+                        }
+                        }
+                }, {
+                    field: 'content',
+                    title: '报修内容',
+
+                }, {
+                    field: 'linkman',
+                    title: '联系人',
+                    visible:false
+
+                }, {
+                    field: 'message',
+                    title: '维修留言',
+                    visible:false
+
+                }, {
+                    field: 'linktel',
+                    title: '电话',
+                    visible:false
+
+                }, {
+                    field: 'address',
+                    title: '地址'
+                }, {
+                    field: 'status',
+                    title: '状态'
+                },{
+                    field: 'operate',
+                    title: '操作',
+                    width: '150px',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                } ]
+            });
+            $('#tb_departments').on('load-success.bs.table', function (data) {
+                $('.star').raty({
+                    score: function() {
+                        return $(this).attr('data-score');
+                    },
+                    readOnly:function() {
+                        if($(this).attr('data-statu')==4){
+                            return true
+                        }else {
+                            return false
+                        }
+                    },
+                    starOff: '/static/index/img/star-off.png',
+                    starOn : '/static/index/img/star-on.png',
+                    click: function(score, evt) {
+                        $.post('/evaluate',{'id':$(this).attr('data-id'),'score':score},function(data){
+                            swal({
+                                title: "提示",
+                                text: data.msg,
+                                type: 'info'
+                            });
+                            $('#tb_departments').bootstrapTable('refresh');
+                        })
+
+                    }
+                });
+
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit,   //页面大小
+                offset: params.offset,  //页码
+                search:params.search
+            };
+            return temp;
+        };
+
+        return oTableInit;
+    };
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+        oInit.Init = function () {
+            //初始化页面上面的按钮事件
+        };
+
+        return oInit;
+    };
+
+
+    $(function () {
+        //页面加载完毕后开始执行的事件
+        var building_json='{' +
+                '"北校区":["行政楼","北教一","北教二","北教三（航空工程学院）","北教四","北教十二（高职学院）","北教六（卫通楼）","北教八（老图书馆）","北教十四（成教楼）","北教十五（空管学院）","北六公寓","学生活动中心（学工部）","大礼堂","档案馆","校医院","专家楼南楼","专家楼北楼","工程训练中心培训楼","工程训练中心办公楼","北教二十四","北教二十三","乘务大楼","北教二十五","老空管基地楼","北一食堂","北二食堂","北三食堂","北四食堂","北五食堂","工程训练中心实习厂","北院电站","游泳馆","北一公寓","北二公寓","北三公寓","北四公寓","北五公寓","北七公寓","北八公寓","北九公寓","北十公寓","北十一公寓","北十二公寓","北十三公寓","北十四公寓","北十五公寓","北十七公寓","北十八公寓","北十九公寓","北二十公寓","北二十一公寓","北二十二公寓","北二十三公寓","北二十四公寓","北二十五公寓","北二十七公寓","罗罗中心(MBA)","实验大楼"],' +
+                '"南校区":["图书馆","南教一（理学院）","南教二（外国语学院）","南教二（人文学院）","南教三","南教四（管理学院）","南教四（计算机学院）","体育场","体育馆","南三食堂","南二食堂","航鸿","木器厂","水电维修中心","理学院实验室（平房）","图书馆大报告厅","南一公寓","南二公寓","南三公寓","南四公寓","南五公寓","南六公寓","南七公寓","南八公寓","南九公寓","南十公寓","南十一公寓","南十二公寓","南十三公寓","南十四公寓","南十五公寓","南十六公寓","南十七公寓","南十八公寓","南十九公寓","南二十公寓","南二十一公寓","南二十二公寓","南二十三公寓","明德馆","空管楼","海航大厦","新活动中心","南二食堂","后勤楼"],' +
+                '"家属区":["院1","院2","院3","院4","院5","院6","院7","院9","院10","院11","院12","院13","院15","院16","院17","院18","院19","院20","院21","院22","院23","院24","院25","院26","院27","院28","院29","院30","院31","院32","院33","院34","院35","院36","院37","院38","院39","原小学校北楼","原小学校南楼","原小学校西楼","幼儿园","航大宾馆东配楼"]' +
+                '}';
+        var building_obj=eval('('+building_json+')');
+
+        $("#campus").on('click',function(){
+            if($("#campus").children().length==1){
+                $("#campus").html('<option value="">请选择校区</option>');
+                for (var key in building_obj)
+                {
+                    $("#campus").append("<option value='"+key+"'>"+key+"</option>");
+                }
+            }
+        })
+        $("#campus").change(function(){
+            var now_campus=$(this).val();
+            $("#building").html('<option value="">请选择楼</option>');
+            for(var k in building_obj[now_campus])
+            {
+                var now_building=building_obj[now_campus][k];
+                $("#building").append('<option value="'+now_building+'">'+now_building+'</option>');
+            }
+        });
+        $('#zjbx').on('click',function(){
+            if($('tbody').find('tr').eq(0).html().indexOf('待评价')>-1){
+                swal({
+                    title: "提示",
+                    text: "请先评价上次报修！",
+                    type: 'error'
+                },function (){
+                    scrollBy(0,document.body.scrollHeight)
+                });
+
+            }else {
+                $('#repair').modal('show')
+            }
+        })
+        //1.初始化Table
+        var oTable = new TableInit();
+        oTable.Init();
+
+        //2.初始化Button的点击事件
+        var oButtonInit = new ButtonInit();
+        oButtonInit.Init();
+
+    });
+
+</script>
+<script>
+    $('form').on('submit',function(){
+        var data=
+        $.post('/repair_add',$('form').serializeArray(), function (data) {
+            if(data.code==2){
+                swal({
+                    title: "提示",
+                    text: data.msg,
+                    type: 'error'
+                });
+                $('#repair').modal('hide')
+                scrollBy(0,document.body.scrollHeight)
+            }else {
+                swal({
+                    title: "提示",
+                    text: data.msg,
+                    type: 'info'
+                });
+            }
+            if(data.code==1){
+                $('#repair').modal('hide')
+            }
+        })
+        return false;
+    })
+
+
+</script>

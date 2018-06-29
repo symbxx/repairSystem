@@ -1,0 +1,119 @@
+
+<div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row row-sm text-center">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="panel padder-v item">
+                                    <div class="h1 text-info font-thin h1">{$count['today']}</div>
+                                    <span class="text-muted text-xs">今日报修量</span>
+                                    <div class="top text-right w-full">
+                                        <i class="fa fa-caret-down text-warning m-r-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="panel padder-v item bg-info">
+                                    <div class="h1 text-fff font-thin h1">{$count['dwx']}</div>
+                                    <span class="text-muted text-xs">待处理数量</span>
+                                    <div class="top text-right w-full">
+                                        <i class="fa fa-caret-down text-warning m-r-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="panel padder-v item bg-primary">
+                                    <div class="h1 text-fff font-thin h1">{$count['yestoday']}</div>
+                                    <span class="text-muted text-xs">昨日报修量</span>
+                                    <div class="top text-right w-full">
+                                        <i class="fa fa-caret-down text-warning m-r-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="panel padder-v item">
+                                    <div class="font-thin h1">{$count['month']}</div>
+                                    <span class="text-muted text-xs">本月报修量</span>
+                                    <div class="bottom text-left">
+                                        <i class="fa fa-caret-up text-warning m-l-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title" style="border-bottom:none;background:#fff;">
+                                <h5>报修数量趋势</h5>
+                            </div>
+                            <div class="ibox-content" style="border-top:none;">
+                                <div id="line" style="height:217px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!--flotdemo-->
+    <script type="text/javascript">
+        var dom = document.getElementById("line");
+        var myChart = echarts.init(dom,'macarons');
+        var app = {};
+        option = null;
+        option = {
+            calculable : true,
+            toolbox: {
+
+                show : true,
+
+                feature : {
+
+                    mark : {show: true},
+
+                    dataView : {show: true, readOnly: false},
+
+                    magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+
+                    restore : {show: true},
+
+                    saveAsImage : {show: true}
+
+                }
+
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: [
+
+                    {volist name="$count['line']" id="vo"}
+                        '{$vo.datetime}',
+                    {/volist}
+        ]
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: [
+                    {volist name="$count['line']" id="vo"}
+                            {$vo.count},
+                    {/volist}
+                ],
+                type: 'line',
+                areaStyle: {},
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+            }]
+        };
+        ;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    </script>

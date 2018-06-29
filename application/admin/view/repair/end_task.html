@@ -1,0 +1,33 @@
+<form action="" id="close">
+    <div class="form-group">
+        <label>最终类型</label>
+        <select name="type" class="form-control">
+            {volist name="list" id="vo"}
+            {if $type==$vo.title}
+            <option selected="selected" value="{$vo.id}">{$vo.title}</option>
+            {else}
+            <option value="{$vo.id}">{$vo.title}</option>
+            {/if}
+            {/volist}
+        </select>
+        </select>
+    </div>
+    <div class="form-group">
+        <lable>结论</lable>
+        <textarea class="form-control" name="message" style="width: 100%;"></textarea>
+    </div>
+    <div class="text-right">
+        <button type="submit" class="btn btn-primary">提交</button>
+    </div>
+
+</form>
+<script>
+    $('#close').on('submit',function(){
+        $.post('/admin/repair/end_task',$('#close').serializeArray(),function(data) {
+            $("#reply").modal('hide');
+            $('#tb_departments').bootstrapTable('refresh');
+            toastr.info(data.msg)
+        })
+        return false;
+    })
+</script>

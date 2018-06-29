@@ -1,0 +1,4 @@
+<?php
+//000000000000
+ exit();?>
+think_serialize:a:14:{s:20:"admin_article_update";s:12:"文章更新";s:17:"admin_article_add";s:12:"添加文章";s:20:"admin_article_delete";s:12:"删除文章";s:26:"admin_notice_change_notice";s:12:"公告修改";s:23:"admin_repair_start_task";s:18:"修改任务状态";s:21:"admin_repair_end_task";s:18:"修改任务状态";s:23:"admin_repair_close_task";s:18:"修改任务状态";s:21:"admin_repair_add_task";s:21:"添加新维修任务";s:24:"admin_repair_delete_task";s:18:"删除维修任务";s:14:"admin_type_add";s:18:"新增报修类型";s:14:"admin_user_add";s:18:"新增管理人员";s:17:"admin_user_delete";s:18:"删除管理人员";s:16:"admin_user_reset";s:12:"重置密码";s:21:"admin_user_change_psd";s:21:"修改自己的密码";}

@@ -1,0 +1,189 @@
+<div class="col-sm-12">
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>所有人员</h5>
+            <div class="ibox-tools">
+                <a href="#" class="btn btn-primary btn-xs btn_add">创建新管理员</a>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row m-b-sm m-t-sm">
+                <div class="col-md-1">
+                    <button type="button" id="loading-example-btn" class="btn btn-white btn-sm" onclick="changemain('/admin/user/show')"><i class="fa fa-refresh"></i> 刷新</button>
+                </div>
+                <div class="col-md-11">
+                    <div class="input-group">
+                        <input type="text" id="key_word" placeholder="请输入关键字" class="input-sm form-control"> <span class="input-group-btn">
+                                                <button onclick="search()" type="button" class="btn btn-sm btn-primary"> 搜索</button> </span>
+                    </div>
+                </div>
+            </div>
+            <div class="project-list">
+                <table class="table table-hover">
+                    <tbody>
+                    {volist name="user_list" id="vo"}
+                    {if $vo.username!="superadmin"}
+                    <tr>
+                        <td width="15%" class="project-status">
+                            {switch name="$vo.statu" }
+                                {case value="0"}<span class="label label-default">锁定</span>{/case}
+                                {case value="1"}<span class="label label-primary">正常</span>{/case}
+                            {/switch}
+
+                        </td>
+                        <td width="20%" class="project-title">
+                            <span><b>{$vo.username}</b></span>
+                        </td>
+                        <td width="20%" class="project-title">
+                            <span><b>{$vo.user_nickname}</b></span>
+                            <br>
+                            <small>创建于 {$vo.create_time}</small>
+                        </td>
+                        <td width="10%" class="project-completion">
+                            <span>
+
+
+                                {switch name="$vo.user_type" }
+                                    {case value="0"}管理员{/case}
+                                    {case value="1"}客服{/case}
+                                    {case value="2"}维修人员{/case}
+                                    {default /}无
+                                {/switch}
+
+                            </span>
+                        </td>
+                        <td width="35%" class="project-actions">
+                            <a href="#" data-id="{$vo.id}" data-type="lock" class="btn btn-white btn-sm option"><i class="fa fa-lock"></i>
+                                {switch name="$vo.statu" }
+                                {case value="0"}解锁{/case}
+                                {case value="1"}锁定{/case}
+                                {/switch}账号
+                            </a>
+                            <a href="#" data-id="{$vo.id}" data-type="reset" class="btn btn-white btn-sm option"><i class="fa fa-paste"></i> 重置密码 </a>
+                            <a href="#" data-id="{$vo.id}" class="btn btn-white btn-sm btn_delete"><i class="fa fa-eraser"></i> 删除 </a>
+                        </td>
+                    </tr>
+                    {/if}
+                    {/volist}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="add_user" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">添加新管理员</h4>
+            </div>
+            <div class="modal-body">
+                <form id="info">
+                    <div class="form-group">
+                        <label for="user_nickname">姓名</label>
+                        <input type="email" name="user_nickname" class="form-control" id="user_nickname">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">账号</label>
+                        <input  type="text" name="username" class="form-control" id="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="text"  name="password" class="form-control" id="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="user_type">角色</label>
+                        <select name="user_type"  class="form-control">
+                            <option value="0">管理员</option>
+                            <option value="1">客服</option>
+                            <option value="2">维修人员</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="btn_add" class="btn btn-primary">添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    function search(){
+        var url='/admin/user/show?key_word='+$('#key_word').val()
+        $.get(url, function (data) {
+            $('#J_iframe').html(data.data);
+        });
+    }
+    $('.btn_add').on('click',function(){
+        $('#add_user').modal('show')
+    })
+    $('.option').on('click', function(){
+        var option_type=$(this).data('type')
+        var id=$(this).data('id')
+        $.post('/admin/user/'+option_type,{'id':id},function(data){
+            if(data.code){
+                swal({
+                    title: "提示！",
+                    text:data.msg,
+                    type: 'success'
+                },function(){
+                    changemain('/admin/user/show')
+                });
+            }else {
+                swal("提示！",data.msg, "error");
+            }
+        })
+    })
+    $(function(){
+        $('.btn_delete').on('click',function(){
+            var id=$(this).data('id')
+            swal({
+                title: "确定删除吗？",
+                text: "删除后将无法恢复！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定删除！",
+                closeOnConfirm: false
+            },
+            function(){
+                $.post('/admin/user/delete',{'id':id},function(data){
+                    if(data.code){
+                        swal({
+                            title: "删除",
+                            text:'删除成功。',
+                            type: 'success'
+                        },function(){
+                            changemain('/admin/user/show')
+                        });
+                    }else {
+                        swal("删除！", "删除失败。", "error");
+                    }
+                })
+            });
+        })
+        $('#btn_add').on('click',function(){
+            $.post('/admin/user/add',$('#info').serializeArray(),function(datas){
+                $('#add_user').modal('hide')
+                if(datas.code){
+                    var types='success'
+                }else {
+                    var types='error'
+                }
+                swal({
+                    title: "提示",
+                    text: datas.msg,
+                    type: types
+                },function(){
+                    changemain('/admin/user/show')
+                });
+            })
+        })
+    })
+
+</script>

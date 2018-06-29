@@ -1,0 +1,103 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <button id="add_bxlx" class="btn btn-primary">添加</button>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <thead>
+                <th width="10%">序号</th>
+                <th width="60%">标题</th>
+                <th width="30%">操作</th>
+            </thead>
+            <tbody>
+                {volist name="list" id="vo"}
+                <tr>
+                    <td>{$i}</td>
+                    <td>{$vo.title}</td>
+                    <td>
+                        <button class="btn btn-info btn_del"  data-id="{$vo.id}">删除</button>
+                    </td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="add">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">添加报修类型</h4>
+            </div>
+            <div class="modal-body">
+                <form id="info">
+                    <div class="form-group">
+                        <label for="title">类型名称</label>
+                        <input type="text" name="title" class="form-control" id="title" placeholder="请输入名称">
+                    </div>
+                    <input type="hidden"  name="type" value="{$type}">
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="btn_add">添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+    $('#add_bxlx').on('click',function(){
+        $('#add').modal('show')
+    })
+    $('.btn_del').on('click',function(){
+        var id=$(this).data('id')
+        swal({
+            title: "确定删除吗？",
+            text: "删除后无法恢复！",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定删除！",
+            closeOnConfirm: false
+        },
+        function(){
+            $.post('/admin/type/delete',{'id':id},function(datas){
+                if(datas.code){
+                    var types='success'
+                }else {
+                    var types='error'
+                }
+                swal({
+                    title: "提示",
+                    text: datas.msg,
+                    type: types
+                },function(){
+                    changemain('/admin/type/show?type={$type}')
+                });
+            })
+        });
+
+    })
+    $('#btn_add').on('click',function(){
+        $.post('/admin/type/add',$('#info').serializeArray(),function(datas){
+            $('#add').modal('hide')
+            if(datas.code){
+                var types='success'
+            }else {
+                var types='error'
+            }
+            swal({
+                title: "提示",
+                text: datas.msg,
+                type: types
+            },function(){
+                changemain('/admin/type/show?type={$type}')
+            });
+
+        })
+
+    })
+
+</script>

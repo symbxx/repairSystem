@@ -1,0 +1,186 @@
+
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+
+
+<div style="margin-top: 10px;">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title" style="padding-top: 3px;
+border-top-width: 1px;
+border-top-style: solid;">
+                <h5>数据统计</h5>
+                <div class="ibox-tools">
+                    <div class="input-group">
+                        <button type="button" class="btn btn-default pull-right" id="daterange-btn">
+                            <span><i class="fa fa-calendar"></i> 日期选择</span>
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ibox-content col-sm-12">
+                <div id="main" class="col-sm-6" style="height:400px;"></div>
+                <div id="main2" class="col-sm-6"  style="height:400px;border-left: 1px solid gray;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#daterange-btn').daterangepicker({
+                    ranges: {
+                        '今天': [moment(), moment()],
+                        '本周': [moment().startOf('week'), moment().endOf('week')],
+                        '本月': [moment().startOf('month'), moment().endOf('month')],
+                        '今年': [moment().startOf('year'), moment().endOf('year')]
+                    },
+                    startDate: moment(),
+                    endDate: moment().endOf('month')
+                },
+                function(start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                    changemain('/admin/repair/show_statistics?start='+start.format('YYYYMMDD')+'&end='+end.format('YYYYMMDD'))
+                }
+        );
+//        $('#datepicker').datepicker({
+//            autoclose: true
+//        });
+
+        var pieChart = echarts.init(document.getElementById("main"),'macarons');
+        var pieoption = {
+            calculable : true,
+            toolbox: {
+
+                show : true,
+
+                feature : {
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+
+            },
+            title : {
+                text: '报修类型统计',
+                subtext:"{$start}-{$end}",
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient : 'vertical',
+                x : 'left',
+                data: [
+                    {volist name="list" id="vo"}
+            '{$vo.type}',
+        {/volist}
+        ]
+            },
+            calculable : true,
+            series : [
+                {
+                    itemStyle: {
+
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        },
+                        normal:{
+                            label:{
+                                show: true,
+                                formatter: '{b} : {c} ({d}%)'
+                            }
+                        }
+                    },
+                    labelLine :{show:true},
+                    name:'数量统计',
+                    type:'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data:[
+                        {volist name="list" id="vo"}
+            {value:{$vo.count}, name:'{$vo.type}'},
+        {/volist}
+                    ]
+                }
+
+            ]
+        };
+
+        pieChart.setOption(pieoption);
+        $(window).resize(pieChart.resize);
+        var pieChart = echarts.init(document.getElementById("main2"),'macarons');
+        var pieoption = {
+            calculable : true,
+            toolbox: {
+
+                show : true,
+
+                feature : {
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+
+            },
+            title : {
+                text: '评分统计',
+                subtext:"{$start}-{$end}",
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient : 'vertical',
+                x : 'left',
+                data: [
+                    {volist name="pf" id="vo" }
+            '{$key}',
+        {/volist}
+        ]
+    },
+        calculable : true,
+                series : [
+            {
+                name:'评分统计',
+                type:'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+                    {volist name="pf" id="vo" }
+            {value:{$vo}, name:'{$key}'},
+        {/volist}
+        ],
+        itemStyle: {
+
+            emphasis: {
+                shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+            },
+            normal:{
+                label:{
+                    show: true,
+                    formatter: '{b} : {c} ({d}%)'
+                }
+            }
+        }
+    }
+        ]
+    };
+        pieChart.setOption(pieoption);
+        $(window).resize(pieChart.resize);
+    })
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg); //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+</script>
